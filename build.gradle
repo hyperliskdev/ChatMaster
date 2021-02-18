@@ -22,8 +22,12 @@ spigot {
     name = project.property("plugin.name")
     authors = [project.property("plugin.author")]
     apiVersion = project.property("api.version")
+    version = project.property("plugin.version")
     load = STARTUP
     //    depends = ['']
+    debug {
+         buildVersion = project.property("minecraft.version")
+    }
 }
 
 repositories {
@@ -63,6 +67,7 @@ publishing {
 
 shadowJar {
     classifier = ''
+    version = project.property("plugin.version")
 }
 
 tasks.build.dependsOn(shadowJar)
