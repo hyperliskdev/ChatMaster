@@ -1,5 +1,6 @@
 package dev.hyperlisk.chatmaster.commands;
 
+import dev.hyperlisk.chatmaster.db.DatabaseHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class WhisperCommand implements CommandExecutor {
 
-
+    private DatabaseHandler dbHandler;
 
     // /whisper <player> <message>
     @Override
@@ -29,9 +30,8 @@ public class WhisperCommand implements CommandExecutor {
         Player origin = (Player) sender;
         Player target = origin.getServer().getPlayer(targetName);
 
-        // Set the group of the origin to the target, and vice versa
-
-        // Set whispered to true for both players
+        // Set whispered to origin and target
+        dbHandler.setWhisper(origin.getUniqueId().toString(), target.getUniqueId().toString());
 
         // Send the message to the target player
 

@@ -30,7 +30,7 @@ public class DatabaseHandler {
         return database.getCollection(collectionName);
     }
 
-    public boolean createPlayerDoc(String uuid, String name, String group, boolean whispered) {
+    public boolean createPlayerDoc(String uuid, String name, String group, String whispered) {
 
         Document doc = new Document("uuid", uuid)
                 .append("name", name)
@@ -45,9 +45,10 @@ public class DatabaseHandler {
     // Get a list of all groups
     public ArrayList<String> getGroups() {
 
+        // What the hell is this object!
         DistinctIterable distinct = getCollection("groups")
                 .distinct("group",
-                        Filters.eq("whispered", "false"),
+                        Filters.eq("whispered", "none"),
                         String.class);
 
         ArrayList<String> listOfGroups = new ArrayList<String>();
@@ -67,6 +68,21 @@ public class DatabaseHandler {
                         new Document("$set", new Document("group", group)));
 
         return groupResult.wasAcknowledged();
+    }
+
+    // Origin and Target are string UUIDs
+    // TODO: Use UUID objects
+    // Sets both target and the origin to whispered to eachother.
+    public boolean setWhisper(String origin, String target) {
+        UpdateResult whisperResult = getCollection("groups")
+                .updateOne(Filters.eq("uuid", origin),
+                        new Document("$set", new Document("whispered", target)));
+
+        UpdateResult whisperResult2 = getCollection("groups")
+                .updateOne(Filters.eq("uuid", target),
+                        new Document("$set", new Document("whispered", origin)));
+
+        return whisperResult.wasAcknowledged();
     }
 
 
