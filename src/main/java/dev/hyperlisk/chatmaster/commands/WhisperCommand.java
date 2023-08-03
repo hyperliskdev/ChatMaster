@@ -30,7 +30,10 @@ public class WhisperCommand implements CommandExecutor {
         }
 
         String targetName = args[0];
-        String message = args[1];
+
+
+        // TODO: Format the message and allow for spaces
+        String message = String.join(" ", args);
 
         Player origin = (Player) sender;
         Player target = origin.getServer().getPlayer(targetName);

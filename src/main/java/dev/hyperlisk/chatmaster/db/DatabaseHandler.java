@@ -35,9 +35,9 @@ public class DatabaseHandler {
         return database.getCollection(collectionName);
     }
 
-    public boolean createPlayerDoc(String uuid, String name, String target, boolean whispered) {
+    public boolean createPlayerDoc(UUID uuid, String name, String target, boolean whispered) {
 
-        Document doc = new Document("uuid", uuid).append("name", name).append("target", target).append("whisper", whispered);
+        Document doc = new Document("uuid", uuid.toString()).append("name", name).append("target", target).append("whisper", whispered);
 
         InsertOneResult groups = getCollection("groups").insertOne(doc);
 
@@ -45,13 +45,13 @@ public class DatabaseHandler {
     }
 
     public Document getPlayerDoc(UUID player) {
-        return (Document) getCollection("groups").find(Filters.eq("uuid", player)).first();
+        return (Document) getCollection("groups").find(Filters.eq("uuid", player.toString())).first();
     }
 
 
     // Set the target of the player to the specified group and ensure whisper is set to false
     public boolean setGroup(UUID player, String group) {
-        Document query = (Document) getCollection("groups").find(Filters.eq("uuid", player)).first();
+        Document query = (Document) getCollection("groups").find(Filters.eq("uuid", player.toString())).first();
 
         Bson updates = Updates.combine(Updates.set("target", group), Updates.set("whisper", false));
 
@@ -71,9 +71,9 @@ public class DatabaseHandler {
 
     // Set the whisper value to true and change the target to the UUID of the target player uuid
     public boolean setWhisper(UUID origin, UUID target) {
-        Document originDoc = (Document) getCollection("groups").find(Filters.eq("uuid", origin)).first();
+        Document originDoc = (Document) getCollection("groups").find(Filters.eq("uuid", origin.toString())).first();
 
-        Document targetDoc = (Document) getCollection("groups").find(Filters.eq("uuid", target)).first();
+        Document targetDoc = (Document) getCollection("groups").find(Filters.eq("uuid", target.toString())).first();
 
         Bson originUpdate = Updates.combine(Updates.set("whisper", true), Updates.set("target", targetDoc.getString("uuid")));
 
@@ -97,7 +97,7 @@ public class DatabaseHandler {
     // Get the whispered player for a specific player
     // Returns the UUID of the whispered player
     public String getWhispered(UUID player) {
-        Document doc = (Document) getCollection("groups").find(Filters.eq("uuid", player)).filter(Filters.eq("whisper", true)).first();
+        Document doc = (Document) getCollection("groups").find(Filters.eq("uuid", player.toString())).filter(Filters.eq("whisper", true)).first();
 
         try {
             return doc.getString("target");
@@ -108,15 +108,15 @@ public class DatabaseHandler {
 
 
     // Get a list of players with a specific group.
-    public ArrayList<UUID> getPlayersInGroup(String group) {
-        ArrayList<UUID> players = new ArrayList<UUID>();
+    public ArrayList<String> getPlayersInGroup(String group) {
+        ArrayList<String> players = new ArrayList<String>();
 
         // .find()
         MongoCursor<Document> cursor = getCollection("groups").find(Filters.eq("target", group)).filter(Filters.eq("whispered", false)).iterator();
 
         try {
             while (cursor.hasNext()) {
-                players.add(UUID.fromString(cursor.next().getString("uuid")));
+                players.add((cursor.next().getString("uuid")));
             }
         } finally {
             cursor.close();
