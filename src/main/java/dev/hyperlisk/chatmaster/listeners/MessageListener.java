@@ -29,6 +29,12 @@ public class MessageListener implements Listener {
         String target = playerDoc.getString("target");
 
         if (playerDoc.getBoolean("whispered")) {
+            // Check if the player is online
+            if (plugin.getServer().getPlayer(target) == null) {
+                origin.sendMessage("§cThe player you are trying to whisper is not online.");
+                return;
+            }
+
             // Send the message to the whispered player
             Player targetPlayer = plugin.getServer().getPlayer(target);
             targetPlayer.sendMessage(message);

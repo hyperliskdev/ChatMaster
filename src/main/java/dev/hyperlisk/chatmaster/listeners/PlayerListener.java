@@ -20,14 +20,11 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-
         Player player = event.getPlayer();
 
         // Create an empty document for the new player in the database
         if(!player.hasPlayedBefore()) {
-
             dbHandler.createPlayerDoc(player.getUniqueId(), player.getName(), "all", false);
-
         }
 
 

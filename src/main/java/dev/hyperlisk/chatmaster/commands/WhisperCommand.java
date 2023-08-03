@@ -1,10 +1,12 @@
 package dev.hyperlisk.chatmaster.commands;
 
 import dev.hyperlisk.chatmaster.db.DatabaseHandler;
+import org.bson.Document;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 
 public class WhisperCommand implements CommandExecutor {
 
@@ -14,8 +16,7 @@ public class WhisperCommand implements CommandExecutor {
         this.dbHandler = dbHandler;
     }
 
-
-    // /whisper <player> <message>
+    // /whisper <player>
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
 
@@ -31,10 +32,6 @@ public class WhisperCommand implements CommandExecutor {
 
         String targetName = args[0];
 
-
-        // TODO: Format the message and allow for spaces
-        String message = String.join(" ", args);
-
         Player origin = (Player) sender;
         Player target = origin.getServer().getPlayer(targetName);
 
@@ -43,11 +40,14 @@ public class WhisperCommand implements CommandExecutor {
             return true;
         }
 
-        // Set whispered to origin and target
-        dbHandler.setWhisper(origin.getUniqueId(), target.getUniqueId());
+        Document playerDoc = dbHandler.getPlayerDoc(origin.getUniqueId());
 
-        // Send the message to the target player
-        target.sendMessage(message);
+        // If the player is already whispereing to someone, stop whispering
+        if (playerDoc.getBoolean("whispered")) {
+            dbHandler.toggleWhisper(origin.getUniqueId());
+            // Only change the origin because maybe the target wants to say something back.
+            return true;
+        }
 
         return true;
     }

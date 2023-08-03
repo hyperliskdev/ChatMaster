@@ -129,4 +129,13 @@ public class DatabaseHandler {
         mongoClient.close();
     }
 
+    public void toggleWhisper(UUID uniqueId) {
+        Document doc = (Document) getCollection("groups").find(Filters.eq("uuid", uniqueId.toString())).first();
+
+        boolean whisper = doc.getBoolean("whisper");
+
+        Bson update = Updates.set("whisper", !whisper);
+
+        getCollection("groups").updateOne(doc, update);
+    }
 }
