@@ -12,11 +12,12 @@ public class PlayerListener implements Listener {
 
         Player player = event.getPlayer();
 
+        // Create an empty document for the new player in the database
         if(!player.hasPlayedBefore()) {
 
         }
 
-
     }
+
 
 }

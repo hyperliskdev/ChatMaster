@@ -1,6 +1,6 @@
 {
   "uuid": "e0a3a51c-8e8d-4b0e-9b7c-0f1f5c9c0a9e",
-  "name": "test",
-  "group": "all",
+  "name": "hyperliskdev",
+  "target": "all",
   "whispered": false
 }

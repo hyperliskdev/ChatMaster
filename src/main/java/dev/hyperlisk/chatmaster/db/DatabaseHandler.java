@@ -3,13 +3,18 @@ package dev.hyperlisk.chatmaster.db;
 import com.mongodb.client.*;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.internal.connection.QueryResult;
 import dev.hyperlisk.chatmaster.ChatMaster;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class DatabaseHandler {
 
@@ -30,71 +35,88 @@ public class DatabaseHandler {
         return database.getCollection(collectionName);
     }
 
-    public boolean createPlayerDoc(String uuid, String name, String group, String whispered) {
+    public boolean createPlayerDoc(String uuid, String name, String target, boolean whispered) {
 
-        Document doc = new Document("uuid", uuid)
-                .append("name", name)
-                .append("group", group)
-                .append("whispered", whispered);
+        Document doc = new Document("uuid", uuid).append("name", name).append("target", target).append("whisper", whispered);
 
         InsertOneResult groups = getCollection("groups").insertOne(doc);
 
         return groups.wasAcknowledged();
     }
 
-    // Get a list of all groups
-    public ArrayList<String> getGroups() {
-
-        // What the hell is this object!
-        DistinctIterable distinct = getCollection("groups")
-                .distinct("group",
-                        Filters.eq("whispered", "none"),
-                        String.class);
-
-        ArrayList<String> listOfGroups = new ArrayList<String>();
+    public Document getPlayerDoc(UUID player) {
+        return (Document) getCollection("groups").find(Filters.eq("uuid", player)).first();
+    }
 
 
-        // TODO: Theres a better way like using the iterable for each or stream collection
-        for (Object group : distinct) {
-            listOfGroups.add((String) group);
+    // Set the target of the player to the specified group and ensure whisper is set to false
+    public boolean setGroup(UUID player, String group) {
+        Document query = (Document) getCollection("groups").find(Filters.eq("uuid", player)).first();
+
+        Bson updates = Updates.combine(Updates.set("target", group), Updates.set("whisper", false));
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+
+        try {
+            UpdateResult result = getCollection("groups").updateOne(query, updates, options);
+            return result.wasAcknowledged();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
 
-        return listOfGroups;
+
     }
 
-    public boolean setGroup(String uuid, String group) {
-        UpdateResult groupResult = getCollection("groups")
-                .updateOne(Filters.eq("uuid", uuid),
-                        new Document("$set", new Document("group", group)));
+    // Set the whisper value to true and change the target to the UUID of the target player uuid
+    public boolean setWhisper(UUID origin, UUID target) {
+        Document originDoc = (Document) getCollection("groups").find(Filters.eq("uuid", origin)).first();
 
-        return groupResult.wasAcknowledged();
+        Document targetDoc = (Document) getCollection("groups").find(Filters.eq("uuid", target)).first();
+
+        Bson originUpdate = Updates.combine(Updates.set("whisper", true), Updates.set("target", targetDoc.getString("uuid")));
+
+        Bson targetUpdate = Updates.combine(Updates.set("whisper", true), Updates.set("target", originDoc.getString("uuid")));
+
+        try {
+            UpdateResult originResult = getCollection("groups").updateOne(originDoc, originUpdate);
+            UpdateResult targetResult = getCollection("groups").updateOne(targetDoc, targetUpdate);
+
+            return originResult.wasAcknowledged() && targetResult.wasAcknowledged();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+
+        }
+
     }
 
-    // Origin and Target are string UUIDs
-    // TODO: Use UUID objects
-    // Sets both target and the origin to whispered to eachother.
-    public boolean setWhisper(String origin, String target) {
-        UpdateResult whisperResult = getCollection("groups")
-                .updateOne(Filters.eq("uuid", origin),
-                        new Document("$set", new Document("whispered", target)));
+    // Get the whispered player for a specific player
+    // Returns the UUID of the whispered player
+    public String getWhispered(UUID player) {
+        Document doc = (Document) getCollection("groups").find(Filters.eq("uuid", player)).filter(Filters.eq("whisper", true)).first();
 
-        UpdateResult whisperResult2 = getCollection("groups")
-                .updateOne(Filters.eq("uuid", target),
-                        new Document("$set", new Document("whispered", origin)));
-
-        return whisperResult.wasAcknowledged();
+        try {
+            return doc.getString("target");
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
     // Get a list of players with a specific group.
-    public ArrayList<String> getPlayersWithGroup(String group) {
-        ArrayList<String> players = new ArrayList<String>();
+    public ArrayList<UUID> getPlayersInGroup(String group) {
+        ArrayList<UUID> players = new ArrayList<UUID>();
 
         // .find()
-        MongoCursor<Document> cursor = getCollection("groups").find(Filters.eq("group", group)).iterator();
+        MongoCursor<Document> cursor = getCollection("groups").find(Filters.eq("target", group)).filter(Filters.eq("whispered", false)).iterator();
+
         try {
             while (cursor.hasNext()) {
-                players.add(cursor.next().getString("name"));
+                players.add(UUID.fromString(cursor.next().getString("uuid")));
             }
         } finally {
             cursor.close();

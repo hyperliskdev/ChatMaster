@@ -10,6 +10,9 @@ public class GroupCommand implements CommandExecutor {
 
     private DatabaseHandler dbHandler;
 
+    public GroupCommand(DatabaseHandler dbHandler) {
+        this.dbHandler = dbHandler;
+    }
 
     // /group <group_name>
     @Override
@@ -29,7 +32,7 @@ public class GroupCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         // Set the group of the player to the specified group
-        dbHandler.setGroup(player.getUniqueId().toString(), groupName);
+        dbHandler.setGroup(player.getUniqueId(), groupName);
 
         return true;
     }

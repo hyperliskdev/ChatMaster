@@ -1,0 +1,10 @@
+name: ChatMaster
+version: '${project.version}'
+main: dev.hyperlisk.chatmaster.ChatMaster
+api-version: '1.20'
+commands:
+  whisper:
+    description: Whisper command
+    aliases: [w]
+    usage: /<command> <player> <message>
+    permission: chatmaster.whisper
