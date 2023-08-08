@@ -17,37 +17,28 @@ public class WhisperCommand implements CommandExecutor {
     }
 
     // /whisper <player>
+    // 1. To enable the whisper function, the player must type /whisper <player>
+    // 2. To disable, the player must type /whisper
+    // If the last whispered message was 20 minutes ago, disable the whisper function.
     @Override
-    public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only players can use this command!");
             return true;
         }
 
-        if (args.length == 0) {
-            sender.sendMessage("You must specify a player to whisper to!");
-            return true;
-        }
-
-        String targetName = args[0];
-
         Player origin = (Player) sender;
-        Player target = origin.getServer().getPlayer(targetName);
+        Document playerDoc = dbHandler.getWhisper(origin.getUniqueId());
+        boolean enabled = playerDoc.getBoolean("enabled");
 
-        if (target == null) {
-            sender.sendMessage("That player is not online!");
+        if (args.length == 0 && enabled) {
+            // Disable whisper
+            dbHandler.updateWhisper(origin.getUniqueId(), false, "", "");
+            origin.sendMessage("Whisper disabled.");
             return true;
         }
 
-        Document playerDoc = dbHandler.getPlayerDoc(origin.getUniqueId());
-
-        // If the player is already whispereing to someone, stop whispering
-        if (playerDoc.getBoolean("whispered")) {
-            dbHandler.toggleWhisper(origin.getUniqueId());
-            // Only change the origin because maybe the target wants to say something back.
-            return true;
-        }
 
         return true;
     }

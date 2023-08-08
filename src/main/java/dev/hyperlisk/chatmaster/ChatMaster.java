@@ -1,6 +1,5 @@
 package dev.hyperlisk.chatmaster;
 
-import dev.hyperlisk.chatmaster.commands.GroupCommand;
 import dev.hyperlisk.chatmaster.commands.WhisperCommand;
 import dev.hyperlisk.chatmaster.db.DatabaseHandler;
 import dev.hyperlisk.chatmaster.listeners.MessageListener;

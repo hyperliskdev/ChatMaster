@@ -1,1 +1,3 @@
 db-connection: "mongodb://localhost:27017"
+whisper-reset-delay: 5000 # 20 Minutes from last whisper message.
+whisper-cooldown: 10 #
