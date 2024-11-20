@@ -24,8 +24,11 @@ public class PlayerListener implements Listener {
 
         // Create an empty document for the new player in the database
         if(!player.hasPlayedBefore()) {
-            dbHandler.createPlayerDoc(player.getUniqueId(), player.getName(), "all", false);
+            dbHandler.createDocument(player.getUniqueId(), player.getName());
         }
+
+
+        
 
 
     }

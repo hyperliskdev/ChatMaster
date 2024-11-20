@@ -1,15 +1,66 @@
 name: ChatMaster
 version: '1.0'
 main: dev.hyperlisk.chatmaster.ChatMaster
-api-version: '1.20'
+api-version: '1.21.3'
 commands:
   whisper:
     description: A command to whisper to an online player
     aliases: [w, wh]
     usage: "/<command> <player>"
     permission: chatmaster.whisper
-  group:
-    description: A command to set the group of a player and send a message to the group
-    aliases: [g, gr]
+  broadcast:
+    description: A command to broadcast a message to all players
+    aliases: [b, bc]
+    usage: "/<command> <message>"
+    permission: chatmaster.broadcast
+  reply:
+    description: A command to reply to the last whisper
+    aliases: [r, re]
+    usage: "/<command> <message>"
+    permission: chatmaster.reply
+  join:
+    description: A command to join a group
+    aliases: [j, jo]
     usage: "/<command> <group>"
-    permission: chatmaster.group
+    permission: chatmaster.join
+  leave:
+    description: A command to leave a group
+    aliases: [l, le]
+    usage: "/<command> <group>"
+    permission: chatmaster.leave
+  list:
+    description: A command to list all groups
+    aliases: [li, ls]
+    usage: "/<command>"
+    permission: chatmaster.list
+  create:
+    description: A command to create a group
+    aliases: [c, cr]
+    usage: "/<command> <group>"
+    permission: chatmaster.create
+  delete:
+    description: A command to delete a group
+    aliases: [d, de]
+    usage: "/<command> <group>"
+    permission: chatmaster.delete
+  invite:
+    description: A command to invite a player to a group
+    aliases: [i, in]
+    usage: "/<command> <player>"
+    permission: chatmaster.invite
+  kick:
+    description: A command to kick a player from a group
+    aliases: [k, ki]
+    usage: "/<command> <player>"
+    permission: chatmaster.kick
+  mute:
+    description: A command to mute a player in a group
+    aliases: [m, mu]
+    usage: "/<command> <player>"
+    permission: chatmaster.mute
+  unmute:
+    description: A command to unmute a player in a group
+    aliases: [u, un]
+    usage: "/<command> <player>"
+    permission: chatmaster.unmute
+  

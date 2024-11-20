@@ -32,6 +32,11 @@ public class DatabaseHandler {
         return database.getCollection(collectionName);
     }
 
+    public void close() {
+        mongoClient.close();
+    }
+
+    // Create a new document for a player.
     public boolean createDocument(UUID playerUUID, String username) {
 
         BasicDBObject whisperObject = new BasicDBObject();
@@ -45,7 +50,6 @@ public class DatabaseHandler {
         // Time-Stamp
         whisperObject.put("last_whisper", "");
 
-
         BasicDBObject channelObject = new BasicDBObject();
 
         // Current channel the player is in
@@ -56,7 +60,8 @@ public class DatabaseHandler {
         listening.add("global");
         channelObject.put("listening", listening);
 
-        Document doc = new Document("uuid", playerUUID.toString()).append("username", username).append("channels", channelObject).append("whisper", whisperObject);
+        Document doc = new Document("uuid", playerUUID.toString()).append("username", username)
+                .append("channels", channelObject).append("whisper", whisperObject);
 
         InsertOneResult groups = getCollection("players").insertOne(doc);
 
@@ -67,18 +72,24 @@ public class DatabaseHandler {
 
         Bson projections = Projections.fields(
                 Projections.include("uuid", "username", "channels", "whisper"),
-                Projections.excludeId()
-        );
+                Projections.excludeId());
 
         return (Document) getCollection("players")
                 .find(Filters.eq(
-                        "uuid", playerUUID.toString()
-                )).projection(projections)
+                        "uuid", playerUUID.toString()))
+                .projection(projections)
                 .first();
     }
 
+    public void updateWhisper(UUID playerUUID, boolean enabled, String targetUUID, String lastWhisper) {
 
-    public void close() {
-        mongoClient.close();
+        Bson filter = Filters.eq("uuid", playerUUID.toString());
+
+        Bson update = new Document("whisper.enabled", enabled)
+                .append("whisper.target_uuid", targetUUID)
+                .append("whisper.last_whisper", lastWhisper);
+
+        getCollection("players").updateOne(filter, new Document("$set", update));
     }
+
 }

@@ -29,8 +29,9 @@ public class WhisperCommand implements CommandExecutor {
         }
 
         Player origin = (Player) sender;
-        Document playerDoc = dbHandler.getWhisper(origin.getUniqueId());
-        boolean enabled = playerDoc.getBoolean("enabled");
+
+        Document originDoc = dbHandler.getPlayerDocument(origin.getUniqueId());
+        boolean enabled = originDoc.getBoolean("whisper.enabled");
 
         if (args.length == 0 && enabled) {
             // Disable whisper
@@ -38,8 +39,6 @@ public class WhisperCommand implements CommandExecutor {
             origin.sendMessage("Whisper disabled.");
             return true;
         }
-
-
         return true;
     }
 }

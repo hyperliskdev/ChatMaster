@@ -1,4 +1,23 @@
-# ChatMaster
+<div align="center">
+    <img src="./assets/logo.png" alt="project logo"/> <br/>
+    A Minecraft plugin to make chatting extra easy.<br/> <br/>
+</div>
+
+
+
+
+if the player is whispering, the target will be a UUID of some online player and the whisper boolean will be true.
+
+
+
+## TODO
+
+- [ ] Add channel functionality instead of this groups mess
+- [ ] Add a way to see who is in your channel
+- [ ] Add a way to see what channels you are in
+
+
+## Examples
 
 ```json
 {
@@ -12,13 +31,3 @@
   }
 }
 ```
-
-if the player is whispering, the target will be a UUID of some online player and the whisper boolean will be true.
-
-
-
-## TODO
-
-- [ ] Add channel functionality instead of this groups mess
-- [ ] Add a way to see who is in your channel
-- [ ] Add a way to see what channels you are in

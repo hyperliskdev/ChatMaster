@@ -4,11 +4,12 @@ import dev.hyperlisk.chatmaster.ChatMaster;
 import dev.hyperlisk.chatmaster.db.DatabaseHandler;
 import dev.hyperlisk.chatmaster.events.ChannelMessageEvent;
 import dev.hyperlisk.chatmaster.events.WhisperMessageEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import javax.print.Doc;
 import java.util.UUID;
@@ -24,14 +25,14 @@ public class MessageListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    public void onPlayerChat(AsyncChatEvent event) {
         Player origin = event.getPlayer();
-        String message = event.getMessage();
+        String message = event.message().toString();
 
         // Look in the database if the player has a valid online uuid for the whispered player
         Document playerDoc = dbHandler.getPlayerDocument(origin.getUniqueId());
 
-        if (playerDoc.get("whisper", Document.class).getBoolean("enabled")) {
+        if (playerDoc.getBoolean("whisper.enabled")) {
             // Trigger a whisper message event
             UUID recieverUuid = playerDoc.get("whisper", Document.class).get("target_uuid", UUID.class);
 
@@ -52,8 +53,6 @@ public class MessageListener implements Listener {
             plugin.getServer().getPluginManager().callEvent(channelMessageEvent);
 
         }
-
-
     }
 
 
