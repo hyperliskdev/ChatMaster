@@ -23,11 +23,14 @@ if the player is whispering, the target will be a UUID of some online player and
 {
   "uuid": "e0a3a51c-8e8d-4b0e-9b7c-0f1f5c9c0a9e",
   "name": "hyperliskdev",
-  "channels": ["all", "staff", "faction", "party"],
+  "channels": {
+    "listening": ["global", "staff", "faction" "party"],
+    "current": "global",
+    },
   "whisper": {
     "enabled": true,
     "target_uuid": "e0a3a51c-8e8d-4b0e-9b7c-0f1f5c9c0a9e",
-    "last_whisper": "2019-01-01T00:00:00.000Z"
+    "last_whisper": "2019-01-01T00:00:00.000Z",
   }
 }
 ```

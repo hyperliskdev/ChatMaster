@@ -11,6 +11,7 @@ import dev.hyperlisk.chatmaster.ChatMaster;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -39,33 +40,39 @@ public class DatabaseHandler {
     // Create a new document for a player.
     public boolean createDocument(UUID playerUUID, String username) {
 
-        BasicDBObject whisperObject = new BasicDBObject();
-
+        BasicDBObject whisperObject = new BasicDBObject();  // Whisper object
+        BasicDBObject channelObject = new BasicDBObject();  // Channel object
         // If the player is currently whispering to someone
         whisperObject.put("enabled", false);
-
         // UUID of the player the user is whispering to
         whisperObject.put("target_uuid", "");
-
         // Time-Stamp
         whisperObject.put("last_whisper", "");
 
-        BasicDBObject channelObject = new BasicDBObject();
+        ArrayList<String> channels = new ArrayList<>();
+        channels.add("global");
 
-        // Current channel the player is in
-        channelObject.put("current", "global");
+        String listening = "global";
 
-        // List of channels the player is listening to
-        ArrayList<String> listening = new ArrayList<>();
-        listening.add("global");
+        channelObject.put("channels", channels);
         channelObject.put("listening", listening);
 
-        Document doc = new Document("uuid", playerUUID.toString()).append("username", username)
-                .append("channels", channelObject).append("whisper", whisperObject);
+        // List of channels the player is listening to
+
+        Document doc = new Document("uuid", playerUUID.toString())
+                .append("username", username)
+                .append("channels", channelObject)
+                .append("whisper", whisperObject);
 
         InsertOneResult groups = getCollection("players").insertOne(doc);
 
         return groups.wasAcknowledged();
+    }
+
+    public boolean documentExists(UUID playerUUID) {
+        // If the player document exists, return true
+        // Otherwise, return false
+        return getCollection("players").find(Filters.eq("uuid", playerUUID.toString())).first() != null;
     }
 
     public Document getPlayerDocument(UUID playerUUID) {

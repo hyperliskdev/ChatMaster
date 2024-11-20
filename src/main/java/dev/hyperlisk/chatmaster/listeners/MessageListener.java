@@ -47,10 +47,7 @@ public class MessageListener implements Listener {
 
         } else {
             // Trigger a channel message event
-            String currentChannel = playerDoc.get("channels", Document.class).getString("current");
 
-            ChannelMessageEvent channelMessageEvent = new ChannelMessageEvent(origin.getUniqueId(), message, currentChannel);
-            plugin.getServer().getPluginManager().callEvent(channelMessageEvent);
 
         }
     }
