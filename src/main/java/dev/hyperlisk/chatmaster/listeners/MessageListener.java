@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import javax.print.Doc;
 import java.util.UUID;
 
 public class MessageListener implements Listener {
@@ -44,21 +43,25 @@ public class MessageListener implements Listener {
             WhisperMessageEvent whisperMessageEvent = new WhisperMessageEvent(origin.getUniqueId(), recieverUuid, message);
             plugin.getServer().getPluginManager().callEvent(whisperMessageEvent);
 
-
         } else {
             // Trigger a channel message event
+            String channel = playerDoc.getString("channel.active");
 
-
+            ChannelMessageEvent channelMessageEvent = new ChannelMessageEvent(origin.getUniqueId(), channel, message);
+            plugin.getServer().getPluginManager().callEvent(channelMessageEvent);
+            
         }
     }
 
 
     @EventHandler
     public void onWhisperMessageEvent(WhisperMessageEvent event) {
+        Player origin = this.plugin.getServer().getPlayer(event.getOrigin());
+        Player reciever = this.plugin.getServer().getPlayer(event.getReciever());
+        String message = event.getMessage();
 
-
-
-
+        reciever.sendMessage("§7[§dWhisper§7] §f" + origin.getName() + " §8» §f" + message);
+        origin.sendMessage("§7[§dWhisper§7] §f" + reciever.getName() + " §8» §f" + message);
     }
 
     @EventHandler

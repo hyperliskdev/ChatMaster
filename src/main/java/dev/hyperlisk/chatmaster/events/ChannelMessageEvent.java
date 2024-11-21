@@ -40,7 +40,6 @@ public class ChannelMessageEvent extends Event implements Cancellable {
         this.sender = sender;
         this.message = message;
         this.channelName = channelName;
-
         this.isCancelled = false;
     }
 

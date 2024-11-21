@@ -1,14 +1,7 @@
 <div align="center">
     <img src="./assets/logo.png" alt="project logo"/> <br/>
-    A Minecraft plugin to make chatting extra easy.<br/> <br/>
+    A Minecraft plugin to make chatting ezpz.<br/> <br/>
 </div>
-
-
-
-
-if the player is whispering, the target will be a UUID of some online player and the whisper boolean will be true.
-
-
 
 ## TODO
 
@@ -18,6 +11,8 @@ if the player is whispering, the target will be a UUID of some online player and
 
 
 ## Examples
+
+if the player is whispering, the target will be a UUID of some online player and the whisper boolean will be true.
 
 ```json
 {

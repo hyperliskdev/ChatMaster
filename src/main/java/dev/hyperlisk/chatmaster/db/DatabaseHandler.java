@@ -11,7 +11,6 @@ import dev.hyperlisk.chatmaster.ChatMaster;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -96,7 +95,17 @@ public class DatabaseHandler {
                 .append("whisper.target_uuid", targetUUID)
                 .append("whisper.last_whisper", lastWhisper);
 
-        getCollection("players").updateOne(filter, new Document("$set", update));
+        getCollection("players").updateOne(filter, new Document("", update));
+    }
+
+    public void updateChannel(UUID playerUUID, ArrayList<String> channels, String listening) {
+
+        Bson filter = Filters.eq("uuid", playerUUID.toString());
+
+        Bson update = new Document("channels.channels", channels)
+                .append("channels.listening", listening);
+
+        getCollection("players").updateOne(filter, new Document("", update));
     }
 
 }

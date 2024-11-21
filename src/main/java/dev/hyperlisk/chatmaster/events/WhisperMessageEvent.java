@@ -11,7 +11,7 @@ public class WhisperMessageEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final UUID sender;
+    private final UUID origin;
     private final UUID reciever;
     private final String message;
 
@@ -21,9 +21,7 @@ public class WhisperMessageEvent extends Event implements Cancellable {
     }
 
     @Override
-    public void setCancelled(boolean b) {
-
-    }
+    public void setCancelled(boolean b) {}
 
     @Override
     public HandlerList getHandlers() {
@@ -35,8 +33,8 @@ public class WhisperMessageEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
-    public WhisperMessageEvent(UUID sender, UUID reciever, String message) {
-        this.sender = sender;
+    public WhisperMessageEvent(UUID origin, UUID reciever, String message) {
+        this.origin = origin;
         this.reciever = reciever;
         this.message = message;
     }
@@ -44,5 +42,13 @@ public class WhisperMessageEvent extends Event implements Cancellable {
 
     public String getMessage() {
         return message;
+    }
+
+    public UUID getReciever() {
+        return reciever;
+    }
+
+    public UUID getOrigin() {
+        return origin;
     }
 }

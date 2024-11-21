@@ -34,11 +34,28 @@ public class WhisperCommand implements CommandExecutor {
         boolean enabled = originDoc.getBoolean("whisper.enabled");
 
         if (args.length == 0 && enabled) {
-            // Disable whisper
-            dbHandler.updateWhisper(origin.getUniqueId(), false, "", "");
-            origin.sendMessage("Whisper disabled.");
+            originDoc.put("whisper.enabled", false);
+            origin.sendMessage("Whispering disabled.");
             return true;
         }
+
+        if (args.length == 1 && !enabled) {
+            Player target = origin.getServer().getPlayer(args[0]);
+            if (target == null) {
+                origin.sendMessage("Player not found.");
+                return true;
+            }
+
+            Document targetDoc = dbHandler.getPlayerDocument(target.getUniqueId());
+            targetDoc.put("whisper.last", System.currentTimeMillis());
+            targetDoc.put("whisper.enabled", true);
+            originDoc.put("whisper.enabled", true);
+            originDoc.put("whisper.target", target.getUniqueId().toString());
+            origin.sendMessage("Whispering enabled with " + target.getName());
+
+            return true;
+        }
+
         return true;
     }
 }

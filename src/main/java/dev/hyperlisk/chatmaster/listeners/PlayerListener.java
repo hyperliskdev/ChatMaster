@@ -2,6 +2,7 @@ package dev.hyperlisk.chatmaster.listeners;
 
 import dev.hyperlisk.chatmaster.ChatMaster;
 import dev.hyperlisk.chatmaster.db.DatabaseHandler;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
