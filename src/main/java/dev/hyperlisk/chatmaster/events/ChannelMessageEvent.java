@@ -9,10 +9,9 @@ import java.util.UUID;
 
 public class ChannelMessageEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final UUID sender;
+    private final UUID origin;
     private final String message;
-    private final String channelName;
-
+    private final String channel;
 
     private boolean isCancelled;
 
@@ -36,24 +35,24 @@ public class ChannelMessageEvent extends Event implements Cancellable {
     }
 
 
-    public ChannelMessageEvent(UUID sender, String message, String channelName) {
-        this.sender = sender;
+    public ChannelMessageEvent(UUID origin, String message, String channel) {
+        this.origin = origin;
         this.message = message;
-        this.channelName = channelName;
+        this.channel = channel;
         this.isCancelled = false;
     }
 
 
-    public UUID getSender() {
-        return sender;
+    public UUID getOrigin() {
+        return origin;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public String getChannelName() {
-        return channelName;
+    public String getChannel() {
+        return channel;
     }
 
 

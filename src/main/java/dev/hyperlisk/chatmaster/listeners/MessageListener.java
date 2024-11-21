@@ -66,6 +66,22 @@ public class MessageListener implements Listener {
 
     @EventHandler
     public void onChannelMessageEvent(ChannelMessageEvent event) {
+        Player origin = this.plugin.getServer().getPlayer(event.getOrigin());
+        String channel = event.getChannel();
+        String message = event.getMessage();
+
+        if (!origin.hasPermission("chatmaster.channel." + channel)) {
+            origin.sendMessage("§cYou do not have permission to send messages in this channel.");
+            return;
+        }
+
+        // Send message to each player with the cooresponding channeling in their 'listening' list.
+        for (Player player : this.plugin.getServer().getOnlinePlayers()) {
+            Document playerDoc = dbHandler.getPlayerDocument(player.getUniqueId());
+            if (playerDoc.getList("channel.listening", String.class).contains(channel)) {
+                player.sendMessage("§7[§d" + channel + "§7] §f" + origin.getName() + " §8» §f" + message);
+            }
+        }
 
 
 
