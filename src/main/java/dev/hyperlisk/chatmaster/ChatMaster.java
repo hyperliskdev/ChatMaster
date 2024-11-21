@@ -4,6 +4,8 @@ import dev.hyperlisk.chatmaster.commands.WhisperCommand;
 import dev.hyperlisk.chatmaster.db.DatabaseHandler;
 import dev.hyperlisk.chatmaster.listeners.MessageListener;
 import dev.hyperlisk.chatmaster.listeners.PlayerListener;
+import dev.hyperlisk.chatmaster.tasks.WhisperResetTask;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ChatMaster extends JavaPlugin {
@@ -12,17 +14,22 @@ public final class ChatMaster extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        dbHandler = new DatabaseHandler(this, "mongodb://localhost:27017");
+        dbHandler = new DatabaseHandler(this, getConfig().getString("mongo-connection-string"));
 
         getServer().getPluginManager().registerEvents(new MessageListener(this, dbHandler), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(this, dbHandler), this);
+
         // Command Register
         getCommand("whisper").setExecutor(new WhisperCommand(dbHandler));
 
+        // Setup the whisper reset task
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new WhisperResetTask(dbHandler), 0L,
+                getConfig().getLong("whisper-reset-delay"));
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
     }
 }
