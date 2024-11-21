@@ -56,16 +56,17 @@ public class DatabaseHandler {
         channelObject.put("channels", channels);
         channelObject.put("listening", listening);
 
-        // List of channels the player is listening to
-
+        // Create the document
         Document doc = new Document("uuid", playerUUID.toString())
                 .append("username", username)
                 .append("channels", channelObject)
                 .append("whisper", whisperObject);
 
-        InsertOneResult groups = getCollection("players").insertOne(doc);
+        // Insert the document into the collection
+        InsertOneResult createDoc = getCollection("players").insertOne(doc);
 
-        return groups.wasAcknowledged();
+        // Return true if the document was acknowledged
+        return createDoc.wasAcknowledged();
     }
 
     public boolean documentExists(UUID playerUUID) {

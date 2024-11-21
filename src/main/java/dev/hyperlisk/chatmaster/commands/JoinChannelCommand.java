@@ -4,7 +4,6 @@ import dev.hyperlisk.chatmaster.db.DatabaseHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class JoinChannelCommand implements CommandExecutor {
 
@@ -14,7 +13,7 @@ public class JoinChannelCommand implements CommandExecutor {
         this.dbHandler = dbHandler;
     }
 
-    // /group <group_name>
+    // /joinchannel <channel>
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return true;
